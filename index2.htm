@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BarberSync Pro</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#0f172a;
+color:white;
+padding:20px;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+}
+
+h1{
+color:#facc15;
+font-size:38px;
+margin-top:10px;
+}
+
+.topo{
+text-align:center;
+margin-bottom:25px;
+}
+
+.logo{
+width:130px;
+height:130px;
+object-fit:cover;
+border-radius:50%;
+border:4px solid #facc15;
+box-shadow:0 0 25px rgba(250,204,21,0.4);
+background:#111827;
+padding:6px;
+transition:0.3s;
+}
+
+.logo:hover{
+transform:scale(1.05);
+box-shadow:0 0 35px rgba(250,204,21,0.7);
+}
+
+.subtitulo{
+color:#cbd5e1;
+margin-top:8px;
+font-size:14px;
+letter-spacing:1px;
+}
+
+.card{
+background:#111827;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:20px;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:5px;
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#1e293b;
+color:white;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+margin-top:15px;
+font-weight:bold;
+cursor:pointer;
+font-size:15px;
+margin-top:0;
+}
+
+.salvar{
+background:#facc15;
+color:black;
+}
+
+.excluir{
+background:#ef4444;
+color:white;
+font-size:11px;
+padding:8px;
+margin-top:8px;
+}
+
+.agendamento{
+background:#1e293b;
+padding:10px;
+border-radius:12px;
+margin-bottom:10px;
+border-left:4px solid #facc15;
+font-size:12px;
+line-height:1.2;
+}
+
+.agendamento h3{
+font-size:15px;
+margin:0 0 5px 0;
+color:#facc15;
+}
+
+.agendamento p{
+font-size:11px;
+margin:3px 0;
+}
+
+@media(max-width:800px){
+.grid{
+grid-template-columns:1fr;
+}
+}
+
+/* BOTÃO FINANCEIRO */
+
+.botao-financeiro{
+position:fixed;
+right:0;
+top:50%;
+transform:translateY(-50%);
+background:#facc15;
+color:black;
+padding:18px 10px;
+font-weight:bold;
+writing-mode:vertical-rl;
+text-orientation:mixed;
+border-radius:15px 0 0 15px;
+cursor:pointer;
+z-index:999;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
+transition:0.3s;
+}
+
+.botao-financeiro:hover{
+background:#fde047;
+}
+
+/* PAINEL */
+
+.painel-financeiro{
+position:fixed;
+top:0;
+right:-420px;
+width:380px;
+height:100vh;
+background:#111827;
+padding:25px;<br>
+padding-bottom: 100px;
+box-shadow:-5px 0 20px rgba(0,0,0,0.5);
+transition:0.4s;
+overflow-y:auto;
+z-index:1000;
+}
+.painel-financeiro.ativo{
+right:0;
+}
+
+.fechar-financeiro{
+background:#ef4444;
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+margin-bottom:20px;
+cursor:pointer;
+width:100%;
+}
+
+.card-financeiro{
+background:#1e293b;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+border-left:4px solid #facc15;
+}
+
+.card-financeiro h3{
+margin:0 0 10px 0;
+color:#facc15;
+font-size:15px;
+}
+
+.card-financeiro p{
+margin:4px 0;
+font-size:14px;
+}
+
+.rodape{
+text-align:center;
+margin-top:20px;
+font-size:12px;
+color:#94a3b8;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- BOTÃO FINANCEIRO -->
+
+<div class="botao-financeiro"
+onclick="abrirFinanceiro()">ÁREA RESTRITA</div>
+
+<!-- PAINEL -->
+
+<div class="painel-financeiro"
+id="painelFinanceiro">
+
+<button class="fechar-financeiro"
+onclick="fecharFinanceiro()">
+Fechar
+</button>
+
+<h2 style="color:#facc15;">
+Financeiro da Barbearia
+</h2>
+
+  <div class="card-financeiro" style="position:relative;"> 
+    <h3>Crescimento Mensal</h3>
+    <p id="crescimentoMensal">Em desenvolvimento</p>
+  </div>
+
+<h3>Relatórios Mensais</h3>
+
+<div id="relatorioMes"
+style="
+display:none;
+margin-top:15px;
+background:#1e293b;
+padding:15px;
+border-radius:12px;
+font-size:13px;
+line-height:1.5;
+">
+
+<h2 id="tituloMes"
+style="
+color:#facc15;
+text-align:center;
+font-size:22px;
+margin-bottom:15px;
+border-bottom:2px solid #facc15;
+padding-bottom:8px;
+">
+</h2>
+
+<p id="mesProdutos"></p>
+
+<p id="mesFaturamentoDia"></p>
+
+<p id="mesFaturamento"></p>
+
+<p id="mesFaturamentoAnual"></p>
+
+<p id="mesCortes"></p>
+
+<div id="mesClientes"></div>
+
+<br>
+
+<div id="mesArrecadacao"></div>
+
+<br>
+
+<p id="mesTicket"></p>
+
+<p id="mesCrescimento"></p>
+
+</div>
+<p onclick="abrirMes(1)" style="cursor:pointer;">�� Janeiro</p>
+<p onclick="abrirMes(2)" style="cursor:pointer;">�� Fevereiro</p>
+<p onclick="abrirMes(3)" style="cursor:pointer;">�� Março</p>
+<p onclick="abrirMes(4)" style="cursor:pointer;">�� Abril</p>
+<p onclick="abrirMes(5)" style="cursor:pointer;">�� Maio</p>
+<p onclick="abrirMes(6)" style="cursor:pointer;">�� Junho</p>
+<p onclick="abrirMes(7)" style="cursor:pointer;">�� Julho</p>
+<p onclick="abrirMes(8)" style="cursor:pointer;">�� Agosto</p>
+<p onclick="abrirMes(9)" style="cursor:pointer;">�� Setembro</p>
+<p onclick="abrirMes(10)" style="cursor:pointer;">�� Outubro</p>
+<p onclick="abrirMes(11)" style="cursor:pointer;">�� Novembro</p>
+<p onclick="abrirMes(12)" style="cursor:pointer;">�� Dezembro</p>
+<div class="card-financeiro">
+
+<h3>Bloquear Agenda</h3>
+
+<label>Barbeiro</label>
+<select id="bloqBarbeiro">
+<option>Cristiano</option>
+<option>Cristopher</option>
+<option>Miguel</option>
+</select>
+
+<label>Data Inicial</label>
+<input type="date" id="bloqInicio">
+
+<label>Data Final</label>
+<input type="date" id="bloqFim">
+
+<button onclick="bloquearPeriodo()">
+Bloquear Período
+</button>
+
+</div>
+<h3 style="margin-top:20px;color:#facc15;">
+Períodos Bloqueados
+</h3>
+
+<div id="avisoBloqueios"
+style="
+margin-top:10px;
+color:#f87171;
+font-size:13px;
+">
+</div>
+
+<div id="listaBloqueios"></div>
+
+<h3 style="margin-top:20px;color:#facc15;">
+Agendamentos Salvos
+</h3>
+
+<div id="listaFinanceiro"></div>
+</div>
+
+<div class="container">
+
+  <div class="topo"> <img src="logo.png" class="logo"> 
+    <h1><font size="+6">BarberSync Pro</font></h1>
+
+<div class="subtitulo">
+Sistema Premium de Agendamentos
+</div>
+
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>Novo Agendamento</h2>
+
+<label>Cliente</label>
+<input type="text" id="cliente">
+
+<label>Telefone</label>
+<input type="text" id="telefone">
+
+<label>Serviço</label>
+<select id="servico">
+<option>Sobrancelha R$:8,00</option>
+<option>Corte R$:35,00</option>
+<option>Navalhado R$:40,00</option>
+<option>Barba R$:35,00</option>
+<option>Corte + Sobrancelha R$:43,00</option>
+<option>Barba + Sobrancelha R$:43,00</option>
+<option>Combo Corte + Barba R$:65,00</option>
+<option>Combo Degrade Navalhado + Sobrancelha R$:45,00</option>
+<option>Combo Degrade Navalhado + Barba+ sobrancelha R$:75,00</option>
+<option>Combo Maquina + Sobrancelha R$:28,00</option>
+<option>Pigmentação R$:30,00</option>
+<option>Luzes R$:75,00</option>
+<option>Pago</option>
+</select>
+
+<label>Barbeiro</label>
+<select id="barbeiro" onchange="atualizarHorarios()">
+<option>Cristiano</option>
+<option>Cristopher</option>
+<option>Miguel</option>
+</select>
+
+<label>Data</label>
+<input type="date" id="data" onchange="atualizarHorarios()">
+
+<label>Hora</label>
+<select id="hora">
+
+<option value="">Selecione</option>
+
+<option value="08:00">08:00</option>
+<option value="08:30">08:30</option>
+<option value="09:00">09:00</option>
+<option value="09:30">09:30</option>
+<option value="10:00">10:00</option>
+<option value="10:30">10:30</option>
+<option value="11:00">11:00</option>
+<option value="11:30">11:30</option>
+
+<option value="12:00">12:30</option>
+<option value="12:30">12:30</option>
+
+<option value="13:00">13:00</option>
+<option value="13:30">13:30</option>
+<option value="14:00">14:00</option>
+<option value="14:30">14:30</option>
+<option value="15:00">15:00</option>
+<option value="15:30">15:30</option>
+<option value="16:00">16:00</option>
+<option value="16:30">16:30</option>
+<option value="17:00">17:00</option>
+<option value="17:30">17:30</option>
+<option value="18:00">18:00</option>
+<option value="18:30">18:30</option>
+<option value="19:00">19:00</option>
+<option value="19:30">19:30</option>
+<option value="20:00">20:00</option>
+
+</select>
+
+<label>Observações</label>
+<textarea id="obs"></textarea>
+
+<button class="salvar"
+onclick="salvarAgendamento()">
+Salvar Agendamento
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Agendamentos</h2>
+
+<div id="lista"></div>
+
+</div>
+
+</div>
+
+<div class="rodape">
+Desenvolvido por Cristiano Duarte • Pelotas-RS • versão 1.0.0
+</div>
+
+</div>
+
+<script>
+
+/* SENHA FINANCEIRO */
+
+const senhaFinanceiro = "1";
+
+/* AGENDAMENTOS */
+
+let agendamentos = JSON.parse(
+localStorage.getItem("barberflow_agendamentos")
+) || [];
+
+/* BLOQUEIOS */
+
+let bloqueios = JSON.parse(
+localStorage.getItem("barberflow_bloqueios")
+) || [];
+console.log("Bloqueios carregados:", bloqueios);
+
+/* HISTÓRICO FINANCEIRO */
+
+let historicoFinanceiro = JSON.parse(
+localStorage.getItem("barberflow_financeiro")
+) || [];
+
+/* NOTIFICAÇÕES */
+
+let notificacoesEnviadas = JSON.parse(
+localStorage.getItem("barberflow_notificacoes")
+) || {};
+
+/* PERMISSÃO */
+
+if("Notification" in window){
+
+Notification.requestPermission();
+
+}
+
+/* LIMPAR ANTIGOS */
+
+function limparAgendamentosAntigos(){
+
+const hoje = new Date();
+
+const dataHoje =
+hoje.toISOString().split("T")[0];
+
+agendamentos =
+agendamentos.filter(function(item){
+
+return item.data >= dataHoje;
+
+});
+
+localStorage.setItem(
+"barberflow_agendamentos",
+JSON.stringify(agendamentos)
+);
+
+}
+
+/* SOM */
+
+function tocarSom(){
+
+const audio = new Audio(
+"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+);
+
+audio.play();
+
+}
+
+/* NOTIFICAÇÕES */
+
+function verificarNotificacoes(){
+
+const agora = new Date();
+
+agendamentos.forEach(function(item){
+
+const dataHora =
+new Date(item.data + " " + converterHora24(item.hora));
+
+const diferenca =
+(dataHora - agora) / 1000 / 60;
+
+const chave30 = item.id + "_30";
+const chave5 = item.id + "_5";
+
+/* 30 MIN */
+
+if(
+diferenca <= 30 &&
+diferenca > 29 &&
+!notificacoesEnviadas[chave30]
+){
+
+mostrarNotificacao(
+"Barbeiro " + item.barbeiro,
+"Você tem o cliente " +
+item.cliente +
+" agendado para daqui a 30 minutos."
+);
+
+notificacoesEnviadas[chave30] = true;
+
+}
+
+/* 5 MIN */
+
+if(
+diferenca <= 5 &&
+diferenca > 4 &&
+!notificacoesEnviadas[chave5]
+){
+
+mostrarNotificacao(
+"Barbeiro " + item.barbeiro,
+"Daqui a 5 minutos o cliente " +
+item.cliente +
+" irá chegar."
+);
+
+notificacoesEnviadas[chave5] = true;
+
+}
+
+});
+
+localStorage.setItem(
+"barberflow_notificacoes",
+JSON.stringify(notificacoesEnviadas)
+);
+
+}
+
+function mostrarNotificacao(titulo, mensagem){
+
+tocarSom();
+
+if(Notification.permission === "granted"){
+
+new Notification(titulo,{
+body: mensagem,
+icon: "logo.png"
+});
+
+}else{
+
+alert(titulo + "\n\n" + mensagem);
+
+}
+
+}
+
+/* HORA */
+
+function converterHora24(hora){
+
+let partesHora = hora.split(" ");
+let horario = partesHora[0];
+let periodo = partesHora[1];
+
+let h = parseInt(horario.split(":")[0]);
+let m = horario.split(":")[1];
+
+if(periodo === "PM" && h < 12){
+h += 12;
+}
+
+if(periodo === "AM" && h === 12){
+h = 0;
+}
+
+h = String(h).padStart(2,"0");
+
+return h + ":" + m;
+
+}
+
+/* LOOP AUTOMÁTICO */
+
+setInterval(function(){
+
+verificarNotificacoes();
+
+verificarAgendamentosConcluidos();
+
+}, 30000);
+
+/* FINALIZAR AGENDAMENTOS AUTOMATICAMENTE */
+
+function verificarAgendamentosConcluidos(){
+
+const agora = new Date();
+
+let alterou = false;
+
+agendamentos = agendamentos.filter(function(item){
+
+const dataHora =
+new Date(item.data + " " + converterHora24(item.hora));
+
+/* SOMA 1 HORA AO AGENDAMENTO */
+
+dataHora.setHours(
+dataHora.getHours() + 1
+);
+
+/* SE O HORÁRIO JÁ PASSOU */
+
+if(agora >= dataHora){
+
+mostrarNotificacao(
+"Atendimento Finalizado",
+"O atendimento de " +
+item.cliente +
+" com o barbeiro " +
+item.barbeiro +
+" foi concluído automaticamente."
+);
+
+alterou = true;
+
+return false;
+
+}
+
+return true;
+
+});
+
+/* SALVA NOVA LISTA */
+
+if(alterou){
+
+localStorage.setItem(
+"barberflow_agendamentos",
+JSON.stringify(agendamentos)
+);
+
+renderizar();
+
+}
+
+}
+/* SALVAR */
+
+function salvarAgendamento(){
+
+const cliente = document.getElementById("cliente").value.trim();
+const telefone = document.getElementById("telefone").value.trim();
+const servico = document.getElementById("servico").value;
+const barbeiro = document.getElementById("barbeiro").value;
+const data = document.getElementById("data").value;
+const hora = document.getElementById("hora").value;
+const obs = document.getElementById("obs").value.trim();
+
+if(cliente === "" || data === "" || hora === ""){
+
+alert("Preencha os campos obrigatórios.");
+return;
+
+}
+
+const horarioExiste = agendamentos.some(function(item){
+
+return (
+item.data === data &&
+item.hora === hora &&
+item.barbeiro === barbeiro
+);
+
+});
+
+if(horarioExiste){
+
+alert(
+"Esse barbeiro já possui um cliente nesse mesmo horário."
+);
+
+return;
+
+}
+
+const periodoBloqueado = bloqueios.some(function(item){
+
+return (
+item.barbeiro === barbeiro &&
+data >= item.inicio &&
+data <= item.fim
+);
+
+});
+
+if(periodoBloqueado){
+
+alert(
+"Agenda bloqueada para este barbeiro neste período."
+);
+
+return;
+
+}
+
+const novo = {
+
+id: Date.now(),
+cliente: cliente,
+telefone: telefone,
+servico: servico,
+barbeiro: barbeiro,
+data: data,
+hora: hora,
+obs: obs
+
+};
+
+agendamentos.push(novo);
+
+localStorage.setItem(
+"barberflow_agendamentos",
+JSON.stringify(agendamentos)
+);
+
+historicoFinanceiro.push(novo);
+
+localStorage.setItem(
+"barberflow_financeiro",
+JSON.stringify(historicoFinanceiro)
+);
+
+renderizar();
+renderizarFinanceiro();
+
+adicionarGoogleAgenda(novo);
+
+limparCampos();
+
+atualizarFinanceiro();
+
+
+alert("Agendamento salvo!");
+
+}
+
+/* GOOGLE */
+
+function adicionarGoogleAgenda(item){
+
+const dataInicio = converterDataGoogle(item.data, item.hora);
+const dataFim = converterFimGoogle(item.data, item.hora);
+
+const texto = encodeURIComponent(
+item.servico + " - " + item.cliente
+);
+
+const detalhes = encodeURIComponent(
+"Barbeiro: " + item.barbeiro +
+"\nTelefone: " + item.telefone +
+"\nObs: " + item.obs
+);
+
+const url =
+"https://calendar.google.com/calendar/render?action=TEMPLATE" +
+"&text=" + texto +
+"&dates=" + dataInicio + "/" + dataFim +
+"&details=" + detalhes;
+
+window.open(url, "_blank");
+
+}
+
+function converterDataGoogle(data, hora){
+
+let partesHora = hora.split(" ");
+let horario = partesHora[0];
+let periodo = partesHora[1];
+
+let h = parseInt(horario.split(":")[0]);
+let m = horario.split(":")[1];
+
+if(periodo === "PM" && h < 12){
+h += 12;
+}
+
+if(periodo === "AM" && h === 12){
+h = 0;
+}
+
+h = String(h).padStart(2,"0");
+
+return data.replaceAll("-","") + "T" + h + m + "00";
+
+}
+
+function converterFimGoogle(data, hora){
+
+let partesHora = hora.split(" ");
+let horario = partesHora[0];
+let periodo = partesHora[1];
+
+let h = parseInt(horario.split(":")[0]);
+let m = parseInt(horario.split(":")[1]);
+
+if(periodo === "PM" && h < 12){
+h += 12;
+}
+
+if(periodo === "AM" && h === 12){
+h = 0;
+}
+
+h += 1;
+
+h = String(h).padStart(2,"0");
+m = String(m).padStart(2,"0");
+
+return data.replaceAll("-","") + "T" + h + m + "00";
+
+}
+
+/* RENDER */
+
+function renderizar(){
+
+const lista = document.getElementById("lista");
+
+lista.innerHTML = "";
+
+if(agendamentos.length === 0){
+
+lista.innerHTML = `
+<p style="color:#cbd5e1;">
+Nenhum agendamento salvo.
+</p>
+`;
+
+return;
+
+}
+
+agendamentos.sort(function(a,b){
+
+return new Date(a.data)
+- new Date(b.data);
+
+});
+
+agendamentos.forEach(function(item){
+
+const div = document.createElement("div");
+
+div.className = "agendamento";
+
+div.innerHTML = `
+
+<h3>${item.cliente}</h3>
+
+<p><strong>Telefone:</strong> ${item.telefone}</p>
+
+<p><strong>Serviço:</strong> ${item.servico}</p>
+
+<p><strong>Barbeiro:</strong> ${item.barbeiro}</p>
+
+<p><strong>Data:</strong> ${formatarData(item.data)}</p>
+
+<p><strong>Hora:</strong> ${item.hora}</p>
+
+<p><strong>Obs:</strong> ${item.obs || "-"}</p>
+
+<button class="excluir"
+onclick="excluirAgendamento(${item.id})">
+Excluir
+</button>
+
+`;
+
+lista.appendChild(div);
+
+});
+
+}
+
+/* EXCLUIR */
+
+function excluirAgendamento(id){
+
+agendamentos = agendamentos.filter(function(item){
+
+return item.id !== id;
+
+});
+
+localStorage.setItem(
+"barberflow_agendamentos",
+JSON.stringify(agendamentos)
+);
+
+renderizar();
+
+}
+
+/* FINANCEIRO COM SENHA */
+
+function abrirFinanceiro(){
+
+const senha = prompt(
+"Digite a senha do financeiro:"
+);
+
+if(senha !== senhaFinanceiro){
+
+alert("Senha incorreta!");
+return;
+
+}
+
+document
+.getElementById("painelFinanceiro")
+.classList.add("ativo");
+
+atualizarFinanceiro();
+console.log(agendamentos);
+renderizarFinanceiro();
+alert("Agendamentos: " + agendamentos.length);
+
+}
+
+function fecharFinanceiro(){
+
+document
+.getElementById("painelFinanceiro")
+.classList.remove("ativo");
+
+}
+
+/* ATUALIZAR FINANCEIRO */
+
+function atualizarFinanceiro(){
+
+let totalDia = 0;
+let totalMes = 0;
+let totalAnual = 0;
+let cortesMes = 0;
+
+let barbeiros = {};
+let arrecadacao = {};
+
+const hoje = new Date();
+
+const mesAtual = hoje.getMonth() + 1;
+const anoAtual = hoje.getFullYear();
+
+historicoFinanceiro.forEach(function(item){
+
+const dataItem = new Date(item.data);
+
+const mesItem = dataItem.getMonth() + 1;
+const anoItem = dataItem.getFullYear();
+
+let valor = extrairValor(item.servico);
+
+/* FATURAMENTO ANUAL */
+
+if(anoItem === anoAtual){
+
+totalAnual += valor;
+
+}
+
+/* FATURAMENTO MENSAL */
+
+if(
+mesItem === mesAtual &&
+anoItem === anoAtual
+){
+
+totalMes += valor;
+cortesMes++;
+
+}
+
+/* FATURAMENTO DIÁRIO */
+
+if(item.data === hoje.toISOString().split("T")[0]){
+
+totalDia += valor;
+
+}
+
+if(!barbeiros[item.barbeiro]){
+
+barbeiros[item.barbeiro] = 0;
+
+}
+
+barbeiros[item.barbeiro]++;
+
+if(!arrecadacao[item.barbeiro]){
+
+arrecadacao[item.barbeiro] = 0;
+
+}
+
+arrecadacao[item.barbeiro] += valor;
+
+});
+
+/* MOSTRAR FATURAMENTO DIA */
+
+const faturamentoDiaEl =
+document.getElementById("faturamentoDia");
+
+if(faturamentoDiaEl){
+faturamentoDiaEl.innerText =
+"R$ " + totalDia.toFixed(2);
+}
+
+/* MOSTRAR FATURAMENTO MÊS */
+
+const faturamentoMesEl =
+document.getElementById("faturamentoMes");
+
+if(faturamentoMesEl){
+
+faturamentoMesEl.innerText =
+"R$ " + totalMes.toFixed(2);
+
+}
+/ * até o final da função atualizarFinanceiro * /
+return;
+
+/* MOSTRAR FATURAMENTO ANUAL */
+
+document.getElementById(
+"faturamentoAnual"
+).innerText =
+"R$ " + totalAnual.toFixed(2);
+
+document.getElementById(
+"cortesMes"
+).innerText = cortesMes;
+
+let clientesTexto = "";
+
+for(let barbeiro in barbeiros){
+
+clientesTexto +=
+barbeiro + ": " +
+barbeiros[barbeiro] +
+" clientes<br>";
+
+}
+
+document.getElementById(
+"clientesBarbeiro"
+).innerHTML = clientesTexto;
+
+let arrecadacaoTexto = "";
+
+for(let barbeiro in arrecadacao){
+
+arrecadacaoTexto +=
+barbeiro + ": R$ " +
+arrecadacao[barbeiro].toFixed(2) +
+"<br>";
+
+}
+
+document.getElementById(
+"valorBarbeiro"
+).innerHTML = arrecadacaoTexto;
+
+let ticket =
+cortesMes > 0
+? totalMes / cortesMes
+: 0;
+
+document.getElementById(
+"ticketMedio"
+).innerText =
+"R$ " + ticket.toFixed(2);
+
+document.getElementById(
+"produtosVendidos"
+).innerText =
+historicoFinanceiro.length;
+
+}
+
+/* VALOR */
+
+function extrairValor(servico){
+
+const match =
+servico.match(/R\$:(\d+)/);
+
+return match
+? parseFloat(match[1])
+: 0;
+
+}
+
+/* DATA */
+
+function formatarData(data){
+
+const partes = data.split('-');
+
+return partes[2] + '/' + partes[1] + '/' + partes[0];
+
+}
+
+/* LIMPAR */
+
+function limparCampos(){
+
+document.getElementById("cliente").value = "";
+document.getElementById("telefone").value = "";
+document.getElementById("servico").value = "Corte";
+document.getElementById("barbeiro").value = "Cristiano";
+document.getElementById("data").value = "";
+document.getElementById("hora").value = "";
+document.getElementById("obs").value = "";
+
+}
+function renderizarBloqueios(){
+console.log("Bloqueios:", bloqueios);
+
+const lista =
+document.getElementById("listaBloqueios");
+
+if(!lista) return;
+
+lista.innerHTML = "";
+
+if(bloqueios.length === 0){
+
+lista.innerHTML =
+"<p>Nenhum período bloqueado.</p>";
+
+return;
+
+}
+
+bloqueios.forEach(function(item,index){
+
+lista.innerHTML += `
+
+<div class="card-financeiro"
+style="position:relative;">
+
+<strong>${item.barbeiro}</strong><br>
+
+De: ${formatarData(item.inicio)}<br>
+
+Até: ${formatarData(item.fim)}<br><br>
+
+
+<button
+onclick="removerBloqueio(${index})"
+style="
+background:#dc2626;
+width:auto;
+padding:5px 10px;
+">
+Desbloquear
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function abrirMes(mes){
+
+const nomesMeses = [
+"",
+"Janeiro",
+"Fevereiro",
+"Março",
+"Abril",
+"Maio",
+"Junho",
+"Julho",
+"Agosto",
+"Setembro",
+"Outubro",
+"Novembro",
+"Dezembro"
+];
+
+let faturamento = 0;
+let cortes = 0;
+let produtosVendidos = 0;
+
+let barbeiros = {};
+let arrecadacao = {};
+
+const hoje =
+new Date().toISOString().split("T")[0];
+
+const anoAtual =
+new Date().getFullYear();
+
+let faturamentoDia = 0;
+let faturamentoAnual = 0;
+
+historicoFinanceiro.forEach(function(item){
+
+const dataItem = new Date(item.data);
+
+const mesItem =
+dataItem.getMonth() + 1;
+
+const anoItem =
+dataItem.getFullYear();
+
+const valor =
+extrairValor(item.servico);
+
+if(anoItem === anoAtual){
+
+faturamentoAnual += valor;
+
+}
+
+if(
+mesItem === mes &&
+anoItem === anoAtual
+){
+
+faturamento += valor;
+
+cortes++;
+
+produtosVendidos++;
+
+if(item.data === hoje){
+
+faturamentoDia += valor;
+
+}
+
+if(!barbeiros[item.barbeiro]){
+
+barbeiros[item.barbeiro] = 0;
+
+}
+
+barbeiros[item.barbeiro]++;
+
+if(!arrecadacao[item.barbeiro]){
+
+arrecadacao[item.barbeiro] = 0;
+
+}
+
+arrecadacao[item.barbeiro] += valor;
+
+}
+
+});
+
+let ticket =
+cortes > 0
+? faturamento / cortes
+: 0;
+
+let textoClientes = "";
+
+for(let nome in barbeiros){
+
+textoClientes +=
+nome +
+": " +
+barbeiros[nome] +
+" clientes<br>";
+
+}
+
+let textoArrecadacao = "";
+
+for(let nome in arrecadacao){
+
+textoArrecadacao +=
+nome +
+": R$ " +
+arrecadacao[nome].toFixed(2) +
+"<br>";
+
+}
+
+document.getElementById(
+"relatorioMes"
+).style.display = "block";
+
+document.getElementById(
+"tituloMes"
+).innerHTML =
+"Relatório de " +
+nomesMeses[mes];
+
+document.getElementById(
+"mesProdutos"
+).innerHTML =
+"<strong>Produtos Vendidos:</strong> " +
+produtosVendidos;
+
+document.getElementById(
+"mesFaturamentoDia"
+).innerHTML =
+"<strong>Faturamento do Dia:</strong> R$ " +
+faturamentoDia.toFixed(2);
+
+document.getElementById(
+"mesFaturamento"
+).innerHTML =
+"<strong>Faturamento do Mês:</strong> R$ " +
+faturamento.toFixed(2);
+
+document.getElementById(
+"mesFaturamentoAnual"
+).innerHTML =
+"<strong>Faturamento Anual:</strong> R$ " +
+faturamentoAnual.toFixed(2);
+
+document.getElementById(
+"mesCortes"
+).innerHTML =
+"<strong>Cortes no Mês:</strong> " +
+cortes;
+
+document.getElementById(
+"mesClientes"
+).innerHTML =
+"<strong>Clientes por Barbeiro:</strong><br>" +
+textoClientes;
+
+document.getElementById(
+"mesArrecadacao"
+).innerHTML =
+"<strong>Arrecadação por Barbeiro:</strong><br>" +
+textoArrecadacao;
+
+document.getElementById(
+"mesTicket"
+).innerHTML =
+"<strong>Ticket Médio:</strong> R$ " +
+ticket.toFixed(2);
+
+document.getElementById(
+"mesCrescimento"
+).innerHTML =
+"<strong>Crescimento Mensal:</strong> Em desenvolvimento";
+
+}
+
+function renderizarFinanceiro(){
+
+const lista =
+document.getElementById("listaFinanceiro");
+
+if(!lista) return;
+
+lista.innerHTML = "";
+
+if(agendamentos.length === 0){
+
+lista.innerHTML =
+"<p>Nenhum agendamento.</p>";
+
+return;
+
+}
+
+agendamentos.forEach(function(item){
+
+lista.innerHTML += `
+
+<div class="card-financeiro" style="position:relative;">
+
+<button
+onclick="excluirAgendamentoFinanceiro(${item.id})"
+style="
+position:absolute;
+top:5px;
+right:5px;
+width:25px;
+height:25px;
+padding:0;
+margin:0;
+font-size:10px;
+">
+X
+</button>
+
+<strong>${item.cliente}</strong><br>
+
+Telefone: ${item.telefone}<br>
+Serviço: ${item.servico}<br>
+Barbeiro: ${item.barbeiro}<br>
+Data: ${formatarData(item.data)}<br>
+Hora: ${item.hora}
+
+</div>
+`;
+});
+
+}
+
+function excluirAgendamentoFinanceiro(id){
+
+if(!confirm("Deseja excluir este agendamento?")){
+return;
+}
+
+agendamentos = agendamentos.filter(function(item){
+return item.id !== id;
+});
+
+localStorage.setItem(
+"barberflow_agendamentos",
+JSON.stringify(agendamentos)
+);
+
+renderizar();
+renderizarFinanceiro();
+
+}
+
+function atualizarHorarios(){
+
+const data = document.getElementById("data").value;
+const barbeiro = document.getElementById("barbeiro").value;
+const select = document.getElementById("hora");
+
+for(let i = 0; i < select.options.length; i++){
+
+let option = select.options[i];
+
+if(option.value === "") continue;
+
+let ocupado = agendamentos.some(function(item){
+
+return (
+item.data === data &&
+item.hora === option.value &&
+item.barbeiro === barbeiro
+);
+
+});
+
+if(ocupado){
+
+option.text = option.value + " (OCUPADO)";
+option.disabled = true;
+
+}else{
+
+option.text = option.value;
+option.disabled = false;
+
+}
+
+}
+
+}
+
+function bloquearPeriodo(){
+
+const barbeiro =
+document.getElementById("bloqBarbeiro").value;
+
+const inicio =
+document.getElementById("bloqInicio").value;
+
+const fim =
+document.getElementById("bloqFim").value;
+
+if(inicio === "" || fim === ""){
+
+alert("Selecione as datas.");
+return;
+
+}
+
+bloqueios.push({
+
+barbeiro: barbeiro,
+inicio: inicio,
+fim: fim
+
+});
+
+localStorage.setItem(
+"barberflow_bloqueios",
+JSON.stringify(bloqueios)
+);
+
+renderizarBloqueios();
+
+alert("Período bloqueado com sucesso!");
+
+}
+/* INICIALIZAÇÃO */
+
+window.onload = function(){
+
+limparAgendamentosAntigos();
+
+renderizar();
+
+renderizarFinanceiro();
+
+atualizarFinanceiro();
+
+verificarNotificacoes();
+
+renderizarBloqueios();
+
+}
+function removerBloqueio(index){
+
+if(index < 0 || index >= bloqueios.length){
+return;
+}
+
+if(!confirm("Deseja desbloquear este período?")){
+return;
+}
+
+bloqueios.splice(index, 1);
+
+localStorage.setItem(
+"barberflow_bloqueios",
+JSON.stringify(bloqueios)
+);
+
+renderizarBloqueios();
+
+}
+
+</script>
+
+</body>
+</html>
